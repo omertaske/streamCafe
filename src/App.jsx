@@ -1,34 +1,19 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import RadioPlayer from './components/RadioPlayer.jsx'
+import ChatRoom from './components/ChatRoom.jsx'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [casterUrl, setCasterUrl] = useState(null)
+  // Eğer kendi Caster.fm embed URL’in varsa buraya ekle
+  setCasterUrl('sapircast.caster.fm/15925')
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div id="root">
+      <h1>StreamCafe</h1>
+      <RadioPlayer casterUrl={casterUrl} />
+         <ChatRoom />
+    </div>
   )
 }
 
