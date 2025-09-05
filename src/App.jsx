@@ -1,18 +1,17 @@
 import { useState } from 'react'
-import './App.css'
 import RadioPlayer from './components/RadioPlayer.jsx'
 import ChatRoom from './components/ChatRoom.jsx'
 
 function App() {
-  const [casterUrl, setCasterUrl] = useState(null)
-  // Eğer kendi Caster.fm embed URL’in varsa buraya ekle
-  setCasterUrl('sapircast.caster.fm/15925')
+  const [casterUrl] = useState('sapircast.caster.fm/15925')
 
   return (
-    <div id="root">
-      <h1>StreamCafe</h1>
-      <RadioPlayer casterUrl={casterUrl} />
-         <ChatRoom />
+    <div className="min-h-screen bg-gray-900 text-white flex flex-col items-center p-6">
+      <h1 className="text-4xl font-extrabold mb-6 text-indigo-400">StreamCafe</h1>
+      <div className="w-full max-w-4xl">
+        <RadioPlayer casterUrl={casterUrl} />
+        <ChatRoom />
+      </div>
     </div>
   )
 }

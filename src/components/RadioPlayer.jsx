@@ -17,27 +17,27 @@ export default function RadioPlayer({ casterUrl }) {
   const [selectedRadio, setSelectedRadio] = useState(null)
 
   return (
-    <div>
-      <h2>🎵 Canlı Yayın</h2>
+    <div className="bg-gray-800 p-6 rounded-2xl shadow-lg mb-8">
+      <h2 className="text-2xl font-semibold mb-4 text-indigo-300">🎵 Canlı Yayın</h2>
       {casterUrl ? (
         <iframe
           title="Caster.fm Player"
           src={casterUrl}
-          width="400"
-          height="100"
-          style={{ border: 'none' }}
+          width="100%"
+          height="120"
+          className="rounded-lg border-0"
         ></iframe>
       ) : (
-        <p>Şu an canlı yayın yok.</p>
+        <p className="text-gray-400">Şu an canlı yayın yok.</p>
       )}
 
-      <h3>Hazır Radyolar</h3>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', justifyContent: 'center' }}>
+      <h3 className="text-xl font-semibold mt-6 mb-3 text-indigo-200">Hazır Radyolar</h3>
+      <div className="flex flex-wrap gap-3">
         {presetRadios.map((radio) => (
           <button
             key={radio.name}
             onClick={() => setSelectedRadio(radio.url)}
-            style={{ padding: '0.5rem 1rem', borderRadius: '5px' }}
+            className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors"
           >
             {radio.name}
           </button>
@@ -45,8 +45,8 @@ export default function RadioPlayer({ casterUrl }) {
       </div>
 
       {selectedRadio && (
-        <div style={{ marginTop: '1rem' }}>
-          <audio controls autoPlay src={selectedRadio}>
+        <div className="mt-4">
+          <audio controls autoPlay src={selectedRadio} className="w-full rounded-lg">
             Tarayıcınız audio elementini desteklemiyor.
           </audio>
         </div>

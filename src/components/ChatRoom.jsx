@@ -33,40 +33,46 @@ export default function ChatRoom() {
   }
 
   return (
-    <div style={{ marginTop: '2rem' }}>
+    <div className="bg-gray-800 p-6 rounded-2xl shadow-lg">
       {!connected ? (
-        <div>
+        <div className="flex flex-col items-center gap-3">
           <input
             placeholder="Nick gir"
             value={nick}
             onChange={(e) => setNick(e.target.value)}
+            className="px-4 py-2 rounded-lg w-full text-black"
           />
-          <button onClick={joinChat}>Katıl</button>
+          <button
+            onClick={joinChat}
+            className="px-6 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors"
+          >
+            Katıl
+          </button>
         </div>
       ) : (
-        <div>
-          <div
-            style={{
-              border: '1px solid #646cff',
-              padding: '0.5rem',
-              height: '200px',
-              overflowY: 'auto',
-              marginBottom: '0.5rem',
-            }}
-          >
+        <div className="flex flex-col gap-3">
+          <div className="h-64 overflow-y-auto p-3 border-2 border-indigo-500 rounded-lg bg-gray-900">
             {messages.map((m, idx) => (
-              <p key={idx}>
-                <b>{m.nick}:</b> {m.text}
+              <p key={idx} className="mb-1">
+                <b className="text-indigo-300">{m.nick}:</b> {m.text}
               </p>
             ))}
           </div>
-          <input
-            placeholder="Mesaj yaz"
-            value={msg}
-            onChange={(e) => setMsg(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
-          />
-          <button onClick={sendMessage}>Gönder</button>
+          <div className="flex gap-2">
+            <input
+              placeholder="Mesaj yaz"
+              value={msg}
+              onChange={(e) => setMsg(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
+              className="flex-1 px-4 py-2 rounded-lg text-black"
+            />
+            <button
+              onClick={sendMessage}
+              className="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 transition-colors"
+            >
+              Gönder
+            </button>
+          </div>
         </div>
       )}
     </div>
