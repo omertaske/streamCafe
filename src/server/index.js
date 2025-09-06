@@ -8,6 +8,13 @@ import path from 'path'
 import crypto from 'crypto'
 import dotenv from 'dotenv'
 
+const app = express()
+app.use(cors({
+  origin: '*', 
+  methods: ['GET','POST'],
+  credentials: true
+}))
+
 dotenv.config()
 
 const UPLOAD_DIR = path.join(process.cwd(), 'uploads')
@@ -15,12 +22,7 @@ if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR)
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'streamadmin' // değiştir üretimde
 
-const app = express()
-app.use(cors({
-  origin: '*', 
-  methods: ['GET','POST'],
-  credentials: true
-}))
+
 
 
 app.use(express.json())
