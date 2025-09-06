@@ -4,13 +4,15 @@ import ChatRoom from './components/ChatRoom.jsx'
 import AdminPanel from './components/AdminPanel.jsx'
 
 function App() {
-  const [ setState] = useState({ live: false, casterUrl: '', tracks: [] })
+const [state, setState] = useState({ live: false, casterUrl: '', tracks: [] })
 
   useEffect(() => {
     // fetch initial state
-    fetch('/api/state').then(r => r.json()).then(json => {
-      if (json.ok) setState(json.state)
-    }).catch(console.error)
+   fetch('http://localhost:3001/api/state')
+  .then(r => r.json())
+  .then(json => { if (json.ok) setState(json.state) })
+  .catch(console.error)
+
 
     // socket.io state updates handled in AudioPlayer via polling/socket if needed
   }, [])

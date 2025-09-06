@@ -17,13 +17,13 @@ export default function AdminPanel({ onStateChange = () => {} }) {
 
   async function fetchState() {
     try {
-      const r = await fetch('/api/state')
+      const r = await fetch('http://localhost:3001/api/state')
       const j = await r.json()
       if (j.ok) {
         setState(j.state)
         onStateChange(j.state)
       }
-    } catch (e) { console.error(e) }
+    } catch (e) { console.error("hata  :  " + e) }
   }
 
  async function adminLogin(password) {
@@ -59,16 +59,39 @@ export default function AdminPanel({ onStateChange = () => {} }) {
     if (j.ok) { setState(j.state); onStateChange(j.state) } else alert('failed')
   }
 
-  async function upload() {
-    if (!token) return alert('login required')
-    if (!file) return alert('choose file')
-    const fd = new FormData()
-    fd.append('file', file)
-    fd.append('title', title || file.name)
-    const r = await fetch('/api/admin/upload', { method: 'POST', headers: { 'x-admin-token': token }, body: fd })
+async function upload() {
+  if (!token) return alert('login required')
+  if (!file) return alert('choose file')
+
+  const fd = new FormData()
+  fd.append('file', file)
+  fd.append('title', title || file.name)
+
+  try {
+    const r = await fetch('http://localhost:3001/api/admin/upload', {
+      method: 'POST',
+      headers: { 'x-admin-token': token },
+      body: fd
+      
+      
+    })
+    console.log("token :   " + token);
+    
     const j = await r.json()
-    if (j.ok) { setFile(null); setTitle(''); fetchState() } else alert('upload failed')
+    if (j.ok) {
+      setFile(null)
+      setTitle('')
+      fetchState() // refresh playlist
+      alert('Upload successful!')
+    } else {
+      alert('Upload failed: ' + j.message)
+    }
+  } catch (e) {
+    console.error(e)
+    alert('Upload error')
   }
+}
+
 
   async function removeTrack(id) {
     if (!token) return alert('login required')
