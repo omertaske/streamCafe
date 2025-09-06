@@ -4,16 +4,16 @@ export default function AudioPlayer({ state, setState }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const audioRef = useRef(null)
+  const [manualPause, setManualPause] = useState(false) // kullanıcı pause yaptı mı?
 
+  // Backend'den güncel state'i çek
   useEffect(() => {
     let mounted = true
     async function fetchState() {
       try {
         const res = await fetch('http://localhost:3001/api/state')
         const json = await res.json()
-        if (json.ok && mounted) {
-          setState(json.state) // props üzerinden güncelle
-        }
+        if (json.ok && mounted) setState(json.state)
       } catch (e) { console.error(e) }
     }
     fetchState()
@@ -21,63 +21,44 @@ export default function AudioPlayer({ state, setState }) {
     return () => { mounted = false; clearInterval(iv) }
   }, [setState])
 
-  
+  // Track değiştiğinde src setle
   useEffect(() => {
-  if (playing && state.tracks[currentIndex]?.url) {
-    audioRef.current.play().catch(() => {});
-  }
-}, [currentIndex, state.tracks, playing]);
-
-  useEffect(() => {
-    if (state.live) {
-      if (audioRef.current) {
-        audioRef.current.pause()
-        setPlaying(false)
-      }
-    } else {
-      if (state.tracks.length > 0 && !playing) {
-        setCurrentIndex(0)
-        setTimeout(() => {
-          audioRef.current?.play().catch(() => {})
-          setPlaying(true)
-        }, 100)
+    if (!state.live && state.tracks.length > 0) {
+      const url = `http://localhost:3001${state.tracks[currentIndex]?.url}`
+      if (audioRef.current && audioRef.current.src !== url) {
+        audioRef.current.src = url
+        if (!manualPause) {
+          audioRef.current.play().then(() => setPlaying(true)).catch(() => {})
+        }
       }
     }
-  }, [state.live, state.tracks, playing])
-
-  useEffect(() => {
-    if (!state.live && state.tracks.length > 0 && !playing) {
-      setCurrentIndex(0)
-      setTimeout(() => {
-        audioRef.current?.play().catch(()=>{})
-        setPlaying(true)
-      }, 100)
-    }
-  }, [state.tracks, state.live, playing])
+  }, [currentIndex, state.tracks, state.live, manualPause])
 
   function onEnded() {
-    if (!state.tracks || state.tracks.length === 0) return
+    if (state.tracks.length === 0) return
     setCurrentIndex((i) => (i + 1) % state.tracks.length)
   }
 
   function togglePlay() {
-    if (state.live) return
-    if (!audioRef.current) return
+    if (state.live || !audioRef.current) return
     if (playing) {
       audioRef.current.pause()
       setPlaying(false)
+      setManualPause(true)
     } else {
-      audioRef.current.play().catch(() => {})
-      setPlaying(true)
+      audioRef.current.play().then(() => {
+        setPlaying(true)
+        setManualPause(false)
+      }).catch(() => {})
     }
   }
 
   function stopPlayer() {
-    if (audioRef.current) {
-      audioRef.current.pause()
-      audioRef.current.currentTime = 0
-      setPlaying(false)
-    }
+    if (!audioRef.current) return
+    audioRef.current.pause()
+    audioRef.current.currentTime = 0
+    setPlaying(false)
+    setManualPause(true)
   }
 
   return (
@@ -86,7 +67,7 @@ export default function AudioPlayer({ state, setState }) {
         <div>
           <h2 className="text-xl font-semibold text-indigo-200">Player</h2>
           <p className="text-sm text-gray-300">
-            {state.live ? 'LIVE yayın (admin tarafından başlatıldı)' : 'Çalan: ' + (state.tracks[state.tracks.length > 0 ? currentIndex : 0]?.title || '—')}
+            {state.live ? 'LIVE yayın (admin tarafından başlatıldı)' : 'Çalan: ' + (state.tracks[currentIndex]?.title || '—')}
           </p>
         </div>
 
@@ -106,15 +87,21 @@ export default function AudioPlayer({ state, setState }) {
         ) : (
           <div>
             <audio
-    ref={audioRef}
-    controls
-    onEnded={onEnded}
-    className="w-full rounded"
-    src={state.tracks[currentIndex]?.url || null} // <-- buraya ekledik
-  />
+              ref={audioRef}
+              controls
+              onEnded={onEnded}
+              className="w-full rounded"
+            />
             <div className="flex gap-2 mt-3 flex-wrap">
               {state.tracks.map((t, idx) => (
-                <button key={t.id} onClick={() => { setCurrentIndex(idx); setPlaying(true); setTimeout(()=>audioRef.current?.play().catch(()=>{}),100) }} className="px-3 py-1 bg-gray-700 rounded text-sm">
+                <button
+                  key={t.id}
+                  onClick={() => {
+                    setCurrentIndex(idx)
+                    setManualPause(false) // track değişince otomatik çalsın
+                  }}
+                  className="px-3 py-1 bg-gray-700 rounded text-sm"
+                >
                   {t.title}
                 </button>
               ))}
