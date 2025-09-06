@@ -4,9 +4,8 @@ export default function AudioPlayer({ state, setState }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const audioRef = useRef(null)
-  const [manualPause, setManualPause] = useState(false) // kullanıcı pause yaptı mı?
+  const [manualPause, setManualPause] = useState(false)
 
-  // Backend'den güncel state'i çek
   useEffect(() => {
     let mounted = true
     async function fetchState() {
@@ -21,7 +20,6 @@ export default function AudioPlayer({ state, setState }) {
     return () => { mounted = false; clearInterval(iv) }
   }, [setState])
 
-  // Track değiştiğinde src setle
   useEffect(() => {
     if (!state.live && state.tracks.length > 0) {
       const url = `http://localhost:3001${state.tracks[currentIndex]?.url}`
@@ -62,27 +60,35 @@ export default function AudioPlayer({ state, setState }) {
   }
 
   return (
-    <div className="bg-gray-800 p-5 rounded-xl shadow-md">
-      <div className="flex items-center justify-between mb-4">
+    <div className="bg-gray-800 p-6 rounded-3xl shadow-2xl border border-indigo-600">
+      <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="text-xl font-semibold text-indigo-200">Player</h2>
-          <p className="text-sm text-gray-300">
+          <h2 className="text-2xl font-semibold text-indigo-200">Player</h2>
+          <p className="text-gray-300 mt-1">
             {state.live ? 'LIVE yayın (admin tarafından başlatıldı)' : 'Çalan: ' + (state.tracks[currentIndex]?.title || '—')}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <button onClick={togglePlay} className="px-3 py-2 rounded bg-indigo-600 hover:bg-indigo-500">
+          <button
+            onClick={togglePlay}
+            className="px-4 py-2 rounded-2xl bg-gradient-to-r from-indigo-600 to-indigo-400 hover:from-indigo-500 hover:to-indigo-300 text-white font-semibold transition-all"
+          >
             {state.live ? 'Live' : (playing ? 'Pause' : 'Play')}
           </button>
-          <button onClick={stopPlayer} className="px-3 py-2 rounded bg-gray-700 hover:bg-gray-600">Stop</button>
+          <button
+            onClick={stopPlayer}
+            className="px-4 py-2 rounded-2xl bg-gray-700 hover:bg-gray-600 text-white transition-all"
+          >
+            Stop
+          </button>
         </div>
       </div>
 
       <div>
         {state.live && state.casterUrl ? (
-          <div className="rounded overflow-hidden">
-            <iframe src={state.casterUrl} title="Caster.fm embed" width="100%" height="120" className="border-0 rounded" />
+          <div className="rounded-xl overflow-hidden">
+            <iframe src={state.casterUrl} title="Caster.fm embed" width="100%" height="140" className="border-0 rounded-xl" />
           </div>
         ) : (
           <div>
@@ -90,17 +96,14 @@ export default function AudioPlayer({ state, setState }) {
               ref={audioRef}
               controls
               onEnded={onEnded}
-              className="w-full rounded"
+              className="w-full rounded-xl shadow-inner"
             />
-            <div className="flex gap-2 mt-3 flex-wrap">
+            <div className="flex gap-2 mt-4 flex-wrap">
               {state.tracks.map((t, idx) => (
                 <button
                   key={t.id}
-                  onClick={() => {
-                    setCurrentIndex(idx)
-                    setManualPause(false) // track değişince otomatik çalsın
-                  }}
-                  className="px-3 py-1 bg-gray-700 rounded text-sm"
+                  onClick={() => { setCurrentIndex(idx); setManualPause(false) }}
+                  className="px-3 py-1 rounded-2xl bg-gray-700 text-sm hover:bg-indigo-600 transition-all"
                 >
                   {t.title}
                 </button>
