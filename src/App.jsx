@@ -29,7 +29,7 @@ function App() {
       <div className="w-full max-w-5xl">
         <header className="mb-6 text-center">
           <h1 className="text-4xl font-extrabold text-indigo-300">StreamCafe</h1>
-          <p className="text-gray-300 mt-1">Canlı yayın / uploaded tracks — admin kontrolüyle</p>
+          <p className="text-gray-300 mt-1">Canlı yayın yakında </p>
         </header>
 
         <AudioPlayer state={state} setState={setState} />

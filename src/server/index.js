@@ -63,7 +63,7 @@ function requireAdmin(req, res, next) {
 app.use("/uploads", express.static(UPLOAD_DIR))
 
 // Login
-app.post("/api/admin/login", (req, res) => {
+app.post("https://streamcafe.onrender.com/api/admin/login", (req, res) => {
   const { password } = req.body || {}
   if (password === ADMIN_PASSWORD) {
     const token = crypto.randomBytes(18).toString("hex")
@@ -75,7 +75,7 @@ app.post("/api/admin/login", (req, res) => {
 })
 
 // Live toggle
-app.post("/api/admin/set-live", requireAdmin, (req, res) => {
+app.post("https://streamcafe.onrender.com/api/admin/set-live", requireAdmin, (req, res) => {
   const { live, casterUrl } = req.body
   if (typeof live === "boolean") state.live = live
   if (typeof casterUrl === "string") state.casterUrl = casterUrl
@@ -84,7 +84,7 @@ app.post("/api/admin/set-live", requireAdmin, (req, res) => {
 })
 
 // Upload
-app.post("/api/admin/upload", requireAdmin, upload.single("file"), (req, res) => {
+app.post("https://streamcafe.onrender.com/api/admin/upload", requireAdmin, upload.single("file"), (req, res) => {
   if (!req.file) return res.status(400).json({ ok: false, message: "No file uploaded" })
   const title = req.body.title || req.file.originalname
   const track = {
@@ -100,7 +100,7 @@ app.post("/api/admin/upload", requireAdmin, upload.single("file"), (req, res) =>
 })
 
 // Remove
-app.post("/api/admin/remove", requireAdmin, (req, res) => {
+app.post("https://streamcafe.onrender.com/api/admin/remove", requireAdmin, (req, res) => {
   const { id } = req.body
   const idx = state.tracks.findIndex(t => t.id === id)
   if (idx >= 0) {
@@ -113,7 +113,7 @@ app.post("/api/admin/remove", requireAdmin, (req, res) => {
 })
 
 // Public
-app.get("/api/state", (req, res) => {
+app.get("https://streamcafe.onrender.com/api/state", (req, res) => {
   res.json({ ok: true, state })
 })
 

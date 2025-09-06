@@ -45,7 +45,7 @@ export default function AdminPanel({ onStateChange = () => {} }) {
 
   async function setLive(liveVal) {
     if (!token) return alert('Login required')
-    const r = await fetch('/api/admin/set-live', {
+    const r = await fetch('https://streamcafe.onrender.com/api/admin/set-live', {
       method: 'POST',
       headers: { 'Content-Type':'application/json', 'x-admin-token': token },
       body: JSON.stringify({ live: liveVal, casterUrl: state.casterUrl || '' })
@@ -89,7 +89,7 @@ export default function AdminPanel({ onStateChange = () => {} }) {
     if (!token) return alert('Login required')
     const url = prompt('Caster.fm embed URL veya iframe URL')
     if (!url) return
-    const r = await fetch('/api/admin/set-live', { method: 'POST', headers: { 'Content-Type':'application/json', 'x-admin-token': token }, body: JSON.stringify({ live: state.live, casterUrl: url }) })
+    const r = await fetch('https://streamcafe.onrender.com/api/admin/set-live', { method: 'POST', headers: { 'Content-Type':'application/json', 'x-admin-token': token }, body: JSON.stringify({ live: state.live, casterUrl: url }) })
     const j = await r.json()
     if (j.ok) setState(j.state)
   }
