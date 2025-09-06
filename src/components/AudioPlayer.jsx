@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 
-export default function AudioPlayer() {
-  const [state, setState] = useState({ live: false, casterUrl: '', tracks: [] })
+export default function AudioPlayer({ state, setState }) {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [playing, setPlaying] = useState(false)
   const audioRef = useRef(null)
@@ -10,53 +9,51 @@ export default function AudioPlayer() {
     let mounted = true
     async function fetchState() {
       try {
-        const res = await fetch('/api/state')
+        const res = await fetch('http://localhost:3001/api/state')
         const json = await res.json()
         if (json.ok && mounted) {
-          setState(json.state)
+          setState(json.state) // props üzerinden güncelle
         }
       } catch (e) { console.error(e) }
     }
     fetchState()
     const iv = setInterval(fetchState, 5000)
     return () => { mounted = false; clearInterval(iv) }
-  }, [])
+  }, [setState])
 
-  // When state changes and live turned off/on, reset playing logic
+  
+  useEffect(() => {
+  if (playing && state.tracks[currentIndex]?.url) {
+    audioRef.current.play().catch(() => {});
+  }
+}, [currentIndex, state.tracks, playing]);
+
   useEffect(() => {
     if (state.live) {
-      // stop audio player if playing
       if (audioRef.current) {
         audioRef.current.pause()
         setPlaying(false)
       }
     } else {
-      // if there are tracks and not playing, start
       if (state.tracks.length > 0 && !playing) {
         setCurrentIndex(0)
-        // small delay to allow src set
         setTimeout(() => {
-          if (audioRef.current) {
-            audioRef.current.play().catch(() => {})
-            setPlaying(true)
-          }
+          audioRef.current?.play().catch(() => {})
+          setPlaying(true)
         }, 100)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state.live, state.tracks])
+  }, [state.live, state.tracks, playing])
 
   useEffect(() => {
-    // whenever currentIndex changes, ensure audio src updated and play if desired
-    if (!state.live && state.tracks.length > 0) {
-      const track = state.tracks[currentIndex]
-      if (audioRef.current && track) {
-        audioRef.current.src = track.url
-        if (playing) audioRef.current.play().catch(() => {})
-      }
+    if (!state.live && state.tracks.length > 0 && !playing) {
+      setCurrentIndex(0)
+      setTimeout(() => {
+        audioRef.current?.play().catch(()=>{})
+        setPlaying(true)
+      }, 100)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentIndex, state.tracks, state.live])
+  }, [state.tracks, state.live, playing])
 
   function onEnded() {
     if (!state.tracks || state.tracks.length === 0) return
@@ -64,7 +61,7 @@ export default function AudioPlayer() {
   }
 
   function togglePlay() {
-    if (state.live) return // live handled by iframe
+    if (state.live) return
     if (!audioRef.current) return
     if (playing) {
       audioRef.current.pause()
@@ -108,7 +105,13 @@ export default function AudioPlayer() {
           </div>
         ) : (
           <div>
-            <audio ref={audioRef} controls onEnded={onEnded} className="w-full rounded" />
+            <audio
+    ref={audioRef}
+    controls
+    onEnded={onEnded}
+    className="w-full rounded"
+    src={state.tracks[currentIndex]?.url || null} // <-- buraya ekledik
+  />
             <div className="flex gap-2 mt-3 flex-wrap">
               {state.tracks.map((t, idx) => (
                 <button key={t.id} onClick={() => { setCurrentIndex(idx); setPlaying(true); setTimeout(()=>audioRef.current?.play().catch(()=>{}),100) }} className="px-3 py-1 bg-gray-700 rounded text-sm">

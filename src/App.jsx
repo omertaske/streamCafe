@@ -37,7 +37,8 @@ const [state, setState] = useState({ live: false, casterUrl: '', tracks: [] })
           <p className="text-sm text-gray-300">Canlı yayın / uploaded tracks — admin kontrolüyle</p>
         </header>
 
-        <AudioPlayer />
+        <AudioPlayer state={state} setState={setState} />
+
 
         <main className="mt-6">
           <ChatRoom />
