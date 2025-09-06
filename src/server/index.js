@@ -17,7 +17,7 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'streamadmin' // değiştir
 
 const app = express()
 app.use(cors({
-  origin: 'http://localhost:5173', // Vite default port
+  origin: '*', 
   methods: ['GET','POST'],
   credentials: true
 }))
