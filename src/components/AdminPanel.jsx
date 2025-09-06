@@ -16,7 +16,7 @@ export default function AdminPanel({ onStateChange = () => {} }) {
 
   async function fetchState() {
     try {
-      const r = await fetch('http://localhost:3001/api/state')
+      const r = await fetch('https://streamcafe.onrender.com/api/state')
       const j = await r.json()
       if (j.ok) {
         setState(j.state)
@@ -27,7 +27,7 @@ export default function AdminPanel({ onStateChange = () => {} }) {
 
   async function adminLogin(password) {
     try {
-      const res = await fetch('http://localhost:3001/api/admin/login', {
+      const res = await fetch('https://streamcafe.onrender.com/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ password })
@@ -63,7 +63,7 @@ export default function AdminPanel({ onStateChange = () => {} }) {
     fd.append('title', title || file.name)
 
     try {
-      const r = await fetch('http://localhost:3001/api/admin/upload', {
+      const r = await fetch('https://streamcafe.onrender.com/api/admin/upload', {
         method: 'POST',
         headers: { 'x-admin-token': token },
         body: fd

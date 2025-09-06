@@ -7,7 +7,7 @@ function App() {
   const [state, setState] = useState({ live: false, casterUrl: '', tracks: [] })
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/state')
+    fetch('https://streamcafe.onrender.com/api/state')
       .then(r => r.json())
       .then(json => { if (json.ok) setState(json.state) })
       .catch(console.error)

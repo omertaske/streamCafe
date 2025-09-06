@@ -10,7 +10,7 @@ export default function AudioPlayer({ state, setState }) {
     let mounted = true
     async function fetchState() {
       try {
-        const res = await fetch('http://localhost:3001/api/state')
+        const res = await fetch('https://streamcafe.onrender.com/api/state')
         const json = await res.json()
         if (json.ok && mounted) setState(json.state)
       } catch (e) { console.error(e) }
@@ -22,7 +22,7 @@ export default function AudioPlayer({ state, setState }) {
 
   useEffect(() => {
     if (!state.live && state.tracks.length > 0) {
-      const url = `http://localhost:3001${state.tracks[currentIndex]?.url}`
+      const url = `https://streamcafe.onrender.com${state.tracks[currentIndex]?.url}`
       if (audioRef.current && audioRef.current.src !== url) {
         audioRef.current.src = url
         if (!manualPause) {
