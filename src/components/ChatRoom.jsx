@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { io } from 'socket.io-client'
 
-const socket = io('http://localhost:3001') // Backend URL
+const socket = io(window.location.origin.replace(/^http/, 'ws').replace(/:\d+$/, ':3001')) // ensures use of backend port 3001 when dev
 
 export default function ChatRoom() {
   const [nick, setNick] = useState('')
