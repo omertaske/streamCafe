@@ -80,7 +80,7 @@ export default function AdminPanel({ onStateChange = () => {} }) {
 
   async function removeTrack(id) {
     if (!token) return alert('Login required')
-    const r = await fetch('/api/admin/remove', { method: 'POST', headers: { 'Content-Type':'application/json', 'x-admin-token': token }, body: JSON.stringify({ id }) })
+    const r = await fetch('https://streamcafe.onrender.com/api/admin/remove', { method: 'POST', headers: { 'Content-Type':'application/json', 'x-admin-token': token }, body: JSON.stringify({ id }) })
     const j = await r.json()
     if (j.ok) fetchState()
   }
